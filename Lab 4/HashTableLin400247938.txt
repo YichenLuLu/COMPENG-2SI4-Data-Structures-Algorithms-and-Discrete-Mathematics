@@ -1,0 +1,200 @@
+package lab4;
+
+public class HashTableLin
+{
+	private Integer[] table;
+	private int size;
+	private double maxLoad;
+
+	//check whether it's prime number
+	//time complexity : O(N)
+	//space complexity: O(1)
+	private boolean isPrime(int n)
+	{
+		for(int i=2;i<=n-1;i++)
+		{
+			if(n%i==0) return false;
+		}
+		return true;
+	}
+
+	//constructor
+	//time complexity : O(N)
+	//space complexity: O(N)
+	public HashTableLin(int maxNum, double load)
+	{
+		//find a prime length
+		int length=(int)(maxNum/load);
+		if(maxNum/load-length>0) length++;
+		while(isPrime(length)==false)
+		{
+			length++;
+		}
+		//create array
+		table=new Integer[length];
+		size=0;
+		maxLoad=load;
+	}
+
+	//insert the new value
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public void insert(int n)
+	{
+		if(isIn(n)) return;
+		//check the load, expand the array if needed
+		if( (size+1.0)/table.length > maxLoad) rehash();
+		//find one empty place and insert it
+		int index=n%table.length;
+		if(index<0) index+=table.length;//if it's negative, plus the size of array
+		while(table[index]!=null)
+		{
+			index++;
+			if(index>=table.length)
+			index%=table.length; // if exceeds the array, back to the beginning of the array
+		}
+		table[index]=n;
+		size++;
+	}
+
+	//insert the new value and record the number of probes
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public int insertCount(int n)
+	{
+		//check the load, expand the array if needed
+		if( (size+1.0)/table.length > maxLoad) rehash();
+		//find one empty place and insert it
+		int index=n%table.length;
+		if(index<0) index+=table.length;
+		int steps=1;
+		while(table[index]!=null && table[index]!=n)
+		{
+			index++;
+			steps++;
+			if(index>=table.length)
+			index%=table.length;
+		}
+		if(table[index]!=null && table[index]==n) return steps;
+		table[index]=n;
+		size++;
+		return steps;
+	}
+
+	//expand the table
+	//time complexity : O(N)
+	//space complexity: O(N)
+	private void rehash()
+	{
+		Integer[] oldTable=table;
+		//find new length
+		int length=table.length*2;
+		while(isPrime(length)==false)
+		{
+			length++;
+		}
+		//create array
+		table=new Integer[length];
+		size=0;
+		//add values to it again
+		for(int i=0;i<oldTable.length;i++)
+		{
+			if(oldTable[i]!=null) insert(oldTable[i]);
+		}
+	}
+
+	//check whether in table
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public boolean isIn(int n)
+	{
+		int index=n%table.length;
+		if(index<0) index+=table.length;
+		while(table[index]!=null)
+		{
+			//found it
+			if(table[index]==n) return true;
+			//try next position
+			else
+			{
+				index++;
+				if(index>=table.length)
+				index %= table.length; // if exceeds the array, back to the beginning of the array
+			}
+		}
+		//can't find it
+		return false;
+	}
+
+	//check whether in table and return the number of probing
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public int searchCount(int n)
+	{
+		int index=n%table.length;
+		if(index<0) index+=table.length;
+		int steps=1;
+		while(table[index]!=null)
+		{
+			//found it
+			if(table[index]==n) return steps;
+				//try next position
+			else
+			{
+				steps++;
+				index++;
+				if(index>=table.length)
+				index %= table.length;
+			}
+		}
+		//can't find it
+		return steps;
+	}
+
+	//show all values in table
+	//time complexity : O(N)
+	//space complexity: O(1)
+	public void printKeys()
+	{
+		for(int i=0;i<table.length;i++)
+		{
+			if(table[i]!=null) System.out.print(table[i]+" ");
+		}
+		System.out.println();
+	}
+
+	//show all values and index in table
+	//time complexity : O(N)
+	//space complexity: O(1)
+	public void printKeysAndIndexes()
+	{
+		for(int i=0;i<table.length;i++)
+		{
+			if(table[i]!=null) System.out.printf("%d %d\n", table[i], i);
+		}
+	}
+
+	//get the max load
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public double getMaxLoadFactor()
+	{
+		return maxLoad;
+	}
+
+	//get the size
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public int getNumKeys()
+	{
+		return size;
+	}
+
+	//get the capacity
+	//time complexity : O(1)
+	//space complexity: O(1)
+	public int getTableSize()
+	{
+		return table.length;
+	}
+}

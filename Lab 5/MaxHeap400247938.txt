@@ -1,0 +1,177 @@
+//Yichen Lu luy191 400247938
+//My partner is JiaoYang Bi
+package Tests;
+public class MaxHeap
+{
+	//record all values
+	private Integer values[];
+	//the number of items in it
+	private int size;
+	//the amount of memory allocated
+	private int length;
+
+	//the constructor with the length of array passed in
+	public MaxHeap(int length)
+	{
+		values=new Integer[length];
+		size=0;
+	}
+	// Time complexity Θ(1)
+	// space complexity Θ(n)
+	
+	//constructor with an array passed in
+	public MaxHeap(Integer[] someArray)
+	{
+		values=new Integer[someArray.length];
+		size=0;
+		for(int i=0;i<someArray.length;i++)
+		{
+			insert(someArray[i]);
+		}
+	}
+	// Time complexity Θ(n)
+	// space complexity Θ(1)
+	
+	//insert one value to the heap
+	public void insert(int n)
+	{
+		//expand the array
+		if(size==values.length)
+		{
+			Integer values2[]=new Integer[size*2];
+			for(int i=0;i<size;i++) values2[i]=values[i];
+			values=values2;
+		}
+		//put the new value to the last position
+		values[size]=n;
+		size++;
+		//compare with his parent
+		int i=size-1;
+		while(i>0)
+		{
+			int j=(i+1)/2-1;
+			//greater than parent, swap them
+			if(values[i]>values[j])
+			{
+				int temp=values[i];
+				values[i]=values[j];
+				values[j]=temp;
+				//continue next pair
+				i=j;
+			}
+			//stop the loop
+			else break;
+		}
+		i--;
+	}
+	//percolate up
+	// Time complexity avg: Θ(1) worst: Θ(logn)
+	// space complexity Θ(n)
+
+	//remove the max
+	private int deleteMax()
+	{
+		int max=values[0];
+		//move last one to first position
+		values[0]=values[size-1];
+		size--;
+		//compare with his descents
+		int i=0;
+		while(i<size-1)
+		{
+			int j=(i+1)*2-1;//left child
+			int k=(i+1)*2;// right child
+			//no descendents anymore
+			if(j>size-1 && k>size-1) break;
+			//only one descendent, and the descendent bigger than parent
+			else if(j<size && k>size-1 && values[j]>values[i])
+			{
+				int temp=values[i];
+				values[i]=values[j];
+				values[j]=temp;
+				i=j;
+			}
+			//select the left bigger one
+			else if(j<size && k<size && values[j]>=values[k] && values[j]>values[i])
+			{
+				int temp=values[i];
+				values[i]=values[j];
+				values[j]=temp;
+				i=j;
+			}
+			//select the right bigger one
+			else if(j<size && k<size && values[k]>=values[j] && values[k]>values[i])
+			{
+				int temp=values[i];
+				values[i]=values[k];
+				values[k]=temp;
+				i=k;
+			}
+			//stop the loop
+			else break;
+		}
+		i++;
+		return max;
+	}
+	//percolate down
+	// Time complexity worst/avg:Θ(logn)
+	// space complexity Θ(1)
+	//to string
+	public String toString()
+	{
+		String s="";
+		for(int i=0;i<size;i++)
+		{
+			s=s+values[i]+",";
+		}
+		//s=s+values[size-1];
+		return s;
+	}
+
+	// Time complexity Θ(n)
+	// space complexity Θ(n)
+	
+	
+	//sort the array by heap
+	public static void heapsort(Integer[] arrayToSort)
+	{
+		MaxHeap heap=new MaxHeap(arrayToSort);
+		for(int i=0;i<arrayToSort.length;i++)
+		{
+			arrayToSort[i]=heap.deleteMax();
+		}
+	}
+
+	//percolate down
+	// Time complexity worst/avg:Θ(nlogn)
+	// space complexity Θ(1)
+	
+	//get the capacity of the array
+	public int getSizeArr()
+	{
+		length = values.length;
+		return length;
+	}
+	// Time complexity Θ(1)
+	// space complexity Θ(1)
+	
+	//get the size of the heap
+	public int getSizeHeap()
+	{
+	
+		return size;
+	}
+	// Time complexity Θ(1)
+	// space complexity Θ(1)
+	
+	//get the array
+	public Integer[] getHeap()
+	{
+		Integer items[]=new Integer[size];
+		for(int i=0;i<size;i++) items[i]=values[i];
+		return items;
+		
+	}
+	// Time complexity Θ(n)
+	// space complexity Θ(n)
+}
